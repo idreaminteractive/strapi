@@ -27,6 +27,8 @@ const initializeHooks = require('./hooks');
 const createStrapiFs = require('./core/fs');
 const getPrefixedDeps = require('./utils/get-prefixed-dependencies');
 
+const initDatabase = require('strapi-dbal');
+
 const createQueryManager = () => {
   const _queries = new Map();
 
@@ -146,6 +148,10 @@ class Strapi extends EventEmitter {
       this.emit('server:starting');
 
       await this.load();
+
+      this.db = await initDatabase({
+        connections: this.config.connections,
+      });
       // Run bootstrap function.
       await this.runBootstrapFunctions();
       // Freeze object.
@@ -434,68 +440,7 @@ class Strapi extends EventEmitter {
       );
     }
 
-    const modelKey = entity.toLowerCase();
-
-    if (this.queryManager.has({ modelKey, plugin })) {
-      return this.queryManager.get({ modelKey, plugin });
-    }
-
-    const model =
-      plugin === 'admin'
-        ? _.get(strapi.admin, ['models', modelKey], undefined)
-        : _.get(strapi.plugins, [plugin, 'models', modelKey]) ||
-          _.get(strapi, ['models', modelKey]) ||
-          _.get(strapi, ['groups', modelKey]) ||
-          undefined;
-
-    if (!model) {
-      throw new Error(`The model ${modelKey} can't be found.`);
-    }
-
-    const connector = model.orm;
-
-    if (!connector) {
-      throw new Error(
-        `Impossible to determine the use ORM for the model ${modelKey}.`
-      );
-    }
-
-    const orm = strapi.hook[model.orm];
-    const query = orm.load.queries({ model, modelKey, strapi: this });
-    Object.assign(query, {
-      orm: connector,
-      primaryKey: model.primaryKey,
-      associations: model.associations,
-    });
-
-    // custom queries made easy
-    Object.assign(query, {
-      get model() {
-        return model;
-      },
-      custom(mapping) {
-        if (typeof mapping === 'function') {
-          return mapping.bind(query, { model, modelKey });
-        }
-
-        if (!mapping[connector]) {
-          throw new Error(`Missing mapping for orm ${connector}`);
-        }
-
-        if (typeof mapping[connector] !== 'function') {
-          throw new Error(
-            `Custom queries must be functions received ${typeof mapping[
-              connector
-            ]}`
-          );
-        }
-
-        return mapping[connector].call(query, { model, modelKey });
-      },
-    });
-
-    this.queryManager.set({ modelKey, plugin }, query);
-    return query;
+    return this.db.query(entity, plugin);
   }
 }
 
