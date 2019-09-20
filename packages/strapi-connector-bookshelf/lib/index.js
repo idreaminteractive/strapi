@@ -32,8 +32,7 @@ const defaults = {
   host: 'localhost',
 };
 
-const isBookshelfConnection = ({ connector }) =>
-  connector === 'strapi-hook-bookshelf';
+const isBookshelfConnection = ({ connector }) => connector === 'bookshelf';
 
 module.exports = function(strapi) {
   function initialize() {

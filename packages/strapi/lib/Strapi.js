@@ -29,28 +29,6 @@ const getPrefixedDeps = require('./utils/get-prefixed-dependencies');
 
 const initDatabase = require('strapi-dbal');
 
-const createQueryManager = () => {
-  const _queries = new Map();
-
-  const toUid = (modelKey, plugin) => {
-    return plugin ? `plugins::${plugin}.${modelKey}` : modelKey;
-  };
-
-  return {
-    get({ modelKey, plugin }) {
-      return _queries.get(toUid(modelKey, plugin));
-    },
-    has({ modelKey, plugin }) {
-      return _queries.has(toUid(modelKey, plugin));
-    },
-    set({ modelKey, plugin }, query) {
-      const uid = toUid(modelKey, plugin);
-      _queries.set(uid, query);
-      return this;
-    },
-  };
-};
-
 /**
  * Construct an Strapi instance.
  *
@@ -126,7 +104,6 @@ class Strapi extends EventEmitter {
       installedHooks: getPrefixedDeps('strapi-hook', pkgJSON),
     };
 
-    this.queryManager = createQueryManager();
     this.fs = createStrapiFs(this);
     this.requireProjectBootstrap();
   }
@@ -149,9 +126,6 @@ class Strapi extends EventEmitter {
 
       await this.load();
 
-      this.db = await initDatabase({
-        connections: this.config.connections,
-      });
       // Run bootstrap function.
       await this.runBootstrapFunctions();
       // Freeze object.
@@ -323,6 +297,10 @@ class Strapi extends EventEmitter {
 
     // Init core store
     initCoreStore(this);
+
+    this.db = await initDatabase({
+      connections: this.config.connections,
+    });
 
     // Initialize hooks and middlewares.
     await initializeMiddlewares.call(this);

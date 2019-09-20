@@ -106,7 +106,7 @@ module.exports = {
     const template = _.get(
       strapi.config.currentEnvironment,
       `database.connections.${connection}.connector`,
-      'strapi-hook-mongoose'
+      'strapi-connector-mongoose'
     ).split('-')[2];
 
     return new Promise((resolve, reject) => {

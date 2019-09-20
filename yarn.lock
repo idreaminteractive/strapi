@@ -17351,6 +17351,14 @@ stealthy-require@^1.1.1:
   resolved "https://registry.yarnpkg.com/stealthy-require/-/stealthy-require-1.1.1.tgz#35b09875b4ff49f26a777e509b3090a3226bf24b"
   integrity sha1-NbCYdbT/SfJqd35QmzCQoyJr8ks=
 
+strapi-hook-knex@3.0.0-beta.16.5:
+  version "3.0.0-beta.16.5"
+  resolved "https://registry.yarnpkg.com/strapi-hook-knex/-/strapi-hook-knex-3.0.0-beta.16.5.tgz#668d242a6f4805566fa507252028c6b4cd4bd2b3"
+  integrity sha512-HrV3/Wtx4zjkdDcoz84zxhYvefTzzxUR2L413JWu6k7adE10N3i4RF0FHHr9bWQzAIOG3swWFUr0d7TH2o2Qsw==
+  dependencies:
+    knex "^0.19.0"
+    lodash "^4.17.11"
+
 stream-browserify@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/stream-browserify/-/stream-browserify-2.0.2.tgz#87521d38a44aa7ee91ce1cd2a47df0cb49dd660b"

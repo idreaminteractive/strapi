@@ -13,7 +13,7 @@ function initConnector(connector) {
     throw new Error(`Connector "${connector}" not found`);
   }
 
-  return require(connector)(strapi);
+  return require(`strapi-connector-${connector}`)(strapi);
 }
 
 const createQueryManager = () => {
@@ -41,14 +41,13 @@ const createQueryManager = () => {
 module.exports = async function({ connections }) {
   const connectors = Object.values(connections).reduce((acc, { connector }) => {
     if (!acc.has(connector)) {
-      acc.set(connector.replace('strapi-hook-', ''), initConnector(connector));
+      acc.set(connector, initConnector(connector));
     }
 
     return acc;
   }, new Map());
 
   for (const connector of connectors.values()) {
-    console.log(connector);
     await connector.initialize();
   }
 
@@ -85,7 +84,7 @@ module.exports = async function({ connections }) {
 
       const query = connectors
         .get(connector)
-        .queries({ model, modelKey, strapi: this });
+        .queries({ model, modelKey, strapi });
 
       Object.assign(query, {
         orm: connector,

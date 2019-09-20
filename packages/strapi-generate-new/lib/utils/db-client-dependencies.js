@@ -15,14 +15,14 @@ module.exports = ({ scope, client }) => {
     case 'postgres':
     case 'mysql':
       return {
-        'strapi-hook-bookshelf': scope.strapiVersion,
-        'strapi-hook-knex': scope.strapiVersion,
+        'strapi-connector-bookshelf': scope.strapiVersion,
+        // 'strapi-hook-knex': scope.strapiVersion,
         knex: 'latest',
         [sqlClientModule[client]]: 'latest',
       };
     case 'mongo':
       return {
-        'strapi-hook-mongoose': scope.strapiVersion,
+        'strapi-connector-mongoose': scope.strapiVersion,
       };
     default:
       throw new Error(`Invalid client "${client}"`);

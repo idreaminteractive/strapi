@@ -36,7 +36,7 @@ module.exports = strapi => {
   // For each connection in the config register a new Knex connection.
   _.forEach(
     _.pickBy(strapi.config.connections, {
-      connector: 'strapi-hook-bookshelf',
+      connector: 'bookshelf',
     }),
     (connection, name) => {
       // Make sure we use the client even if the typo is not the exact one.
