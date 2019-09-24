@@ -27,7 +27,7 @@ const initializeHooks = require('./hooks');
 const createStrapiFs = require('./core/fs');
 const getPrefixedDeps = require('./utils/get-prefixed-dependencies');
 
-const initDatabase = require('strapi-dbal');
+const { initializeDatabase } = require('strapi-dbal');
 
 /**
  * Construct an Strapi instance.
@@ -298,9 +298,7 @@ class Strapi extends EventEmitter {
     // Init core store
     initCoreStore(this);
 
-    this.db = await initDatabase({
-      connections: this.config.connections,
-    });
+    this.db = await initializeDatabase(this);
 
     // Initialize hooks and middlewares.
     await initializeMiddlewares.call(this);
@@ -409,15 +407,8 @@ class Strapi extends EventEmitter {
    * Binds queries with a specific model
    * @param {string} entity - entity name
    * @param {string} plugin - plugin name or null
-   * @param {Object} queriesMap - a map of orm to queries object factory (defaults to ./core-api/queries)
    */
   query(entity, plugin) {
-    if (!entity) {
-      throw new Error(
-        `You can't call the query method without passing the model's name as a first argument.`
-      );
-    }
-
     return this.db.query(entity, plugin);
   }
 }

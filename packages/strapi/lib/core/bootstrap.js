@@ -128,7 +128,7 @@ module.exports = function(strapi) {
 
     Object.assign(model, {
       modelType: 'contentType',
-      uid: `strapi::admin.${key}`,
+      uid: `admin::${key}`,
       identity: model.identity || _.upperFirst(key),
       globalId: model.globalId || _.upperFirst(_.camelCase(`admin-${key}`)),
       connection:
